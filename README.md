@@ -1,2 +1,11 @@
-# rectangle_planner
-Genetic algorithm solving the issue of planning location of small rectangles on one big board
+# Rectangle planner
+Genetic algorithm solving the issue of planning location of small rectangles on one big board.
+
+## Data
+* input - file with dimentions of small boards
+* output - surface of small boards, dimensions and their locations
+
+## Technologies
+* C++
+* library GAlib
+* XXX for drawings
