@@ -1,0 +1,19 @@
+# -*- Mode: makefile -*-
+# Copyright (c) 2005 Matthew Wall, all rights reserved
+# makefile variables for compiling on unix environments
+# -----------------------------------------------------------------------------
+
+LIB   =libga.a
+DESTDIR=/usr/local
+HDR_DEST_DIR=$(DESTDIR)/include
+LIB_DEST_DIR=$(DESTDIR)/lib
+MKDEPEND    = makedepend
+MKDIR       = mkdir -p
+CP          = cp
+RM          = rm -rf
+CXX         = g++
+CXXFLAGS    = -g -Wall -fpermissive
+LD          = g++ -w
+AR          = ar rv
+INSTALL     = install -c
+RANLIB      = echo no ranlib
