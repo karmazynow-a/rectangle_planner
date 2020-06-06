@@ -8,4 +8,4 @@ Genetic algorithm solving the issue of planning location of small rectangles on 
 ## Technologies
 * C++
 * library GAlib
-* XXX for drawings
+* python, turtle for drawings
