@@ -3,6 +3,7 @@
 #include <ga/ga.h>
 
 #include "Board.h"
+#include "BoardGenome.h"
 
 // funkcja celu
 float objective(GAGenome &);
@@ -15,12 +16,14 @@ int main () {
 
 	// kodowanie binarne
 	GABin2DecPhenotype map;
-	map.add(30, 0, 1);
-	map.add(30, 0, 1);
+	map.add(30, 0.0, 1.0);
+	map.add(30, 0.0, 1.0);
 
 	GABin2DecGenome genome(map, objective);
 
-	GASimpleGA ga(genome);
+	BoardGenome gg ("../data/example_input.dat");
+
+	GASimpleGA ga(gg);
 
 	// inicjacja algorytmu
 	ga.populationSize(popsize);
@@ -58,20 +61,20 @@ int main () {
 
 	genome = ga.statistics().bestIndividual();
 
+	/*
 	std::cout << "Najlepsze rozwiazanie : "
 			<< "F( x=" << genome.phenotype(0) 
 			<< ", y=" << genome.phenotype(1) 
 			<< ") = " << objective(genome) << std::endl;
-		
+	*/
 	return 0;
 }
 
 
 float objective(GAGenome & c) {
-  GABin2DecGenome & genome = (GABin2DecGenome &)c;
+  //GABin2DecGenome & genome = (GABin2DecGenome &) c;
 
-  double x = genome.phenotype(0);
-  double y = genome.phenotype(1);
+  // obliczyć powierzchnie
+  // sprawedzić przecięcia między wszystkimi
   return 0;
 }
-
