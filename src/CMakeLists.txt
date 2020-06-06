@@ -10,11 +10,11 @@ IF(NOT EXISTS ${GALIB})
 ENDIF(NOT EXISTS ${GALIB})
 
 SET( APP_HEADERS 
-    ${CMAKE_SOURCE_DIR}/BoardGenome.h)
+    ${CMAKE_SOURCE_DIR}/utility.h)
 
 SET( APP_SOURCES 
     ${CMAKE_SOURCE_DIR}/main.cpp 
-    ${CMAKE_SOURCE_DIR}/BoardGenome.cpp )
+    ${CMAKE_SOURCE_DIR}/utility.cpp )
 
 
 ADD_EXECUTABLE( ${APP_NAME} ${APP_SOURCES} ${APP_HEADERS} ) 

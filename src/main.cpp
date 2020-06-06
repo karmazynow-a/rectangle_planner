@@ -2,48 +2,40 @@
 #include <iostream>
 #include <ga/ga.h>
 
-#include "Board.h"
-#include "BoardGenome.h"
+#include "utility.h"
 
-// funkcja celu
-float objective(GAGenome &);
+extern std::vector<Board> boardList;
 
 int main () {
+
+	const int W = 2800;
+	const int H = 2070;
 
 	int popsize  = 100;
 	int ngen     = 1000;
 	float pcross = 0.5, pmut = 0.1;
 
-	// kodowanie binarne
-	GABin2DecPhenotype map;
-	map.add(30, 0.0, 1.0);
-	map.add(30, 0.0, 1.0);
+	boardList = readData("../data/example_input.dat");
+	GABin2DecPhenotype map = initPhenotype(boardList.size(), W, H);
 
 	GABin2DecGenome genome(map, objective);
 
-	BoardGenome gg ("../data/example_input.dat");
+	//genome.initializer(init);
+    genome.crossover(GABin2DecGenome::TwoPointCrossover);
+    //genome.mutator(mutator);
+    //genome.initialize();
 
-	GASimpleGA ga(gg);
 
-	// inicjacja algorytmu
+	GASimpleGA ga(genome);
 	ga.populationSize(popsize);
 	ga.nGenerations(ngen);
 	ga.pMutation(pmut);
 	ga.pCrossover(pcross);
 
-	// nieujemność f dostosowania
-	GASigmaTruncationScaling scaling;
-	ga.scaling(scaling);
-
-	// ustawienie selekcji
-	GARouletteWheelSelector s;
-	ga.selector(s);
-
-	// ustawienie krzyżowania
-	ga.crossover(GABin2DecGenome::TwoPointCrossover);
-
-	// sukcesja elitarna
-	ga.elitist(gaTrue); 
+	ga.scaling(GASigmaTruncationScaling());
+	ga.selector(GARouletteWheelSelector());
+	ga.elitist(gaTrue);
+	ga.maximize();
 
 	// zapis statystyk
 	ga.scoreFilename("zbieznosc.dat"); // plik z statystykami
@@ -60,21 +52,7 @@ int main () {
 	ga.evolve((unsigned)time(0));
 
 	genome = ga.statistics().bestIndividual();
+	saveResults(genome, boardList);
 
-	/*
-	std::cout << "Najlepsze rozwiazanie : "
-			<< "F( x=" << genome.phenotype(0) 
-			<< ", y=" << genome.phenotype(1) 
-			<< ") = " << objective(genome) << std::endl;
-	*/
 	return 0;
-}
-
-
-float objective(GAGenome & c) {
-  //GABin2DecGenome & genome = (GABin2DecGenome &) c;
-
-  // obliczyć powierzchnie
-  // sprawedzić przecięcia między wszystkimi
-  return 0;
 }

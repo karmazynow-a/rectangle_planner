@@ -15,7 +15,7 @@ from Tkinter import *
 parser = argparse.ArgumentParser(description = 
 	'Draw layout of small boards on big board.')
 parser.add_argument('-f', '--file', metavar='FILE', type=str, nargs=1, 
-	default=['../data/example_output.dat'], help='name of input file')
+	default=['../build/output.txt'], help='name of input file')
 
 args = parser.parse_args()
 

@@ -1,4 +1,6 @@
 .vscode
+draw/board.eps
+/build
 
 # Prerequisites
 *.d
