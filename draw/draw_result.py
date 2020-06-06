@@ -40,23 +40,13 @@ class Board:
         turtle.color('black', color)
         turtle.pendown()
         turtle.begin_fill()
-        if not self.rotated:
-            turtle.forward(self.width)
-            turtle.left(90)
-            turtle.forward(self.height)
-            turtle.left(90)
-            turtle.forward(self.width)
-            turtle.left(90)
-            turtle.forward(self.height)
-            turtle.left(90)
-        else:
-            turtle.forward(self.height)
-            turtle.left(90)
-            turtle.forward(self.width)
-            turtle.left(90)
-            turtle.forward(self.height)
-            turtle.left(90)
-            turtle.forward(self.width)
+
+        edges = [self.height, self.width, self.height, self.width] \
+            if self.rotated \
+            else [self.width, self.height, self.width, self.height]
+
+        for edge in edges:
+            turtle.forward(edge)
             turtle.left(90)
 
         turtle.end_fill()
