@@ -75,9 +75,7 @@ def main():
         turtle_screen = t.Screen()
         turtle_screen.setup(WIDTH + 50, HEIGHT + 50)
         turtle_screen.setworldcoordinates(0, WIDTH + 50, HEIGHT + 50, 0)
-
-
-
+        
         color_list = [
             '#c77373',
 	        '#b1e369',

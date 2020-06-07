@@ -3,12 +3,11 @@
 #include <ga/ga.h>
 
 #include "utility.h"
-
-extern std::vector<Board> boardList;
+#include "BoardList.h"
 
 int main () {
 
-	//testIntersection();
+	//o.testIntersection();
 
 	const int W = 2800;
 	const int H = 2070;
@@ -17,8 +16,8 @@ int main () {
 	int ngen     = 1000;
 	float pcross = 0.5, pmut = 0.1;
 
-	boardList = readData("../data/example_input.dat");
-	GABin2DecPhenotype map = initPhenotype(boardList.size(), W, H);
+	BoardList::readData("../data/example_input.dat");
+	GABin2DecPhenotype map = initPhenotype(BoardList::size(), W, H);
 
 	GABin2DecGenome genome(map, objective);
 
@@ -54,7 +53,7 @@ int main () {
 	ga.evolve((unsigned)time(0));
 
 	genome = ga.statistics().bestIndividual();
-	saveResults(genome, boardList);
+	saveResults(genome);
 
 	return 0;
 }
