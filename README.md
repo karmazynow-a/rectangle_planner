@@ -4,6 +4,7 @@ Genetic algorithm solving the issue of planning location of small rectangles on 
 ## TODO
 * argument parsing - input, output file, board dimention
 * create class? issue with objective fcv
+* canvas size is too small
 
 ## Data
 * input - file with dimentions of small boards

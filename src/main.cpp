@@ -8,6 +8,8 @@ extern std::vector<Board> boardList;
 
 int main () {
 
+	//testIntersection();
+
 	const int W = 2800;
 	const int H = 2070;
 

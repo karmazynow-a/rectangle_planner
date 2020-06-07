@@ -54,3 +54,25 @@ GABin2DecPhenotype initPhenotype(const int N, const int W, const int H);
 int mutator(GAGenome & g, float pm);
 
 int outsidePenalty(const Board &, const BoardLocation &);
+
+float intersectionPenalty(const int &, const std::vector<Board> &, 
+    const std::vector<BoardLocation> & );
+
+std::vector<BoardLocation> createBoardLocationList(const GABin2DecGenome & g);
+
+float calculateIntersection (const Board &, const BoardLocation &, const Board &,
+    const BoardLocation &);
+
+float checkCorner1( const std::pair<int, int> & l1, const std::pair<int, int> & r1,
+    const std::pair<int, int> & l2, const std::pair<int, int> & r2);
+
+float checkCorner2( const std::pair<int, int> & l1, const std::pair<int, int> & r1,
+    const std::pair<int, int> & l2, const std::pair<int, int> & r2);
+
+float checkVerticalSide( const std::pair<int, int> & l1, const std::pair<int, int> & r1,
+    const std::pair<int, int> & l2, const std::pair<int, int> & r2, const int & height);
+
+float checkHorizontalSide( const std::pair<int, int> & l1, const std::pair<int, int> & r1,
+    const std::pair<int, int> & l2, const std::pair<int, int> & r2, const int & height);
+
+void testIntersection();
