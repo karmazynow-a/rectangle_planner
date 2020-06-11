@@ -25,7 +25,6 @@ SET( APP_HEADERS
     ${TOOLS_HEADERS} )
 
 SET( BOARD_SOURCES 
-    ${CMAKE_SOURCE_DIR}/Board/Board.cpp
     ${CMAKE_SOURCE_DIR}/Board/BoardList.cpp
     ${CMAKE_SOURCE_DIR}/Board/BoardLocation.cpp )
 

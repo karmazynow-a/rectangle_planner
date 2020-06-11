@@ -11,10 +11,6 @@ public:
     inline int getWidth() const { return width; }
     inline int getHeight() const { return height; }
     inline int getArea() const { return height*width; }
-    inline bool checkBorders() const { return (width < maxWidth) && (height < maxHeight); }
-
-    static int maxWidth;
-    static int maxHeight;
 
 private:
     int width;  ///< Width of the board

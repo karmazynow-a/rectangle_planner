@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <ga/ga.h>
 
 #include "../Board/Board.h"
@@ -15,8 +14,6 @@ public:
     int outsidePenalty(const Board &, const BoardLocation &);
 
     float intersectionPenalty(const int &, const std::vector<BoardLocation> & );
-
-    std::vector<BoardLocation> createBoardLocationList(const GABin2DecGenome & g);
 
     void testIntersection();
 

@@ -9,10 +9,11 @@
  ******************************************************************************/
 class AGtools {
 public:
-    static float objective(GAGenome & g) {return Objective::objective(g);}
+    static float objective(GAGenome& g) {return Objective::objective(g);}
     static void setObjectiveParams(const float&, const float&, const bool& );
 
-    static int mutator(GAGenome & , float ); ///< Mutation operator
+    static int mutator(GAGenome& , float ); ///< Mutation operator
 
-    static GABin2DecPhenotype initPhenotype(const int&, const int&, const int&);
+    static GABin2DecPhenotype initPhenotype(const int&, const int&, const int&); ///< Create phenotype
+    static void init(GAGenome& );           ///< Fill initial population
 };

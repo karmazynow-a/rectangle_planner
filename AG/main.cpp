@@ -1,31 +1,31 @@
 #include <cstdlib>
 #include <iostream>
+#include <iomanip>
 #include <ga/ga.h>
 
 #include "AGtools/AGtools.h"
 #include "utility.h"
 #include "Board/BoardList.h"
-#include "Board/Board.h"
+#include "Board/BoardLocation.h"
 
 int main () {
-	Board::maxWidth = 2800;
-	Board::maxHeight = 2070;
+	BoardLocation::maxWidth = 2800;
+	BoardLocation::maxHeight = 2070;
 
-	int popsize  = 100;
-	int ngen     = 100;
-	float pcross = 0.5, pmut = 0.5;
+	int popsize  = 1000;
+	int ngen     = 500;
+	int punishGen = 400;
+	float pcross = 0.3, pmut = 0.5;
+	AGtools::setObjectiveParams(10, 10, true);
 
 	BoardList::readData("../data/example_input.dat");
-	GABin2DecPhenotype map = AGtools::initPhenotype(BoardList::size(), Board::maxWidth, Board::maxHeight);
+	GABin2DecPhenotype map = AGtools::initPhenotype(BoardList::size(), BoardLocation::maxWidth, BoardLocation::maxHeight);
 
-	AGtools::setObjectiveParams(100, 100, true);
 	GABin2DecGenome genome(map, AGtools::objective);
 
-	//genome.initializer(init);
+	genome.initializer(AGtools::init);
     genome.crossover(GABin2DecGenome::TwoPointCrossover);
-    //genome.mutator(mutator);
-    genome.initialize();
-
+    genome.mutator(AGtools::mutator);
 
 	GASimpleGA ga(genome);
 	ga.populationSize(popsize);
@@ -61,13 +61,27 @@ int main () {
 
 	while ( !ga.done() ) {
 		ga.step();
+		//std::cout << "BEST" << std::endl;
 		std::cout << ga.generation() << "\t conv=" << ga.convergence();
 		genome = ga.statistics().bestIndividual();
 		std::cout << "\t x=" << genome.phenotype(0) << 
 			"\t Fbest=" << AGtools::objective(genome) << std::endl;
-	
-		if (ga.generation() == ngen/2){
-			AGtools::setObjectiveParams(0, 0, false);
+/*
+		std::cout << "POP" << std::endl;
+		GAPopulation p = ga.population();
+		for (int i = 0; i< ga.populationSize(); ++i){
+			std::cout << std::setw(10) << std::fixed << AGtools::objective(p.individual(i)) << std::endl;
+		}
+*/		
+		if (ga.generation() == punishGen){
+			ga.elitist(gaFalse);
+			AGtools::setObjectiveParams(1, 1, false);
+		} else if (ga.generation() == punishGen + 1){
+			ga.elitist(gaTrue);
+		} else if (ga.generation() == 50) {
+			AGtools::setObjectiveParams(100, 100, true);
+		} else if (ga.generation() == 100) {
+			AGtools::setObjectiveParams(1000, 1000, true);
 		}
 	}
 

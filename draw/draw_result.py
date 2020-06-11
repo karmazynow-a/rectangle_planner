@@ -2,7 +2,7 @@
 # script for drawing algorithm result
 
 import argparse
-import numpy as np
+from math import ceil, floor
 import random
 import warnings
 
@@ -27,10 +27,10 @@ scale = args.scale[0]
 class Board:
     def __init__(self, idx, width, height, x, y, rotated):
         self.idx = idx
-        self.width = width*scale
-        self.height = height*scale
-        self.x = x*scale
-        self.y = y*scale
+        self.width = floor(width*scale)
+        self.height = floor(height*scale)
+        self.x = floor(x*scale)
+        self.y = floor(y*scale)
         self.rotated = rotated
 
     def draw(self, turtle, color):
@@ -64,17 +64,16 @@ def main():
         total_surface = file.readline()
         print("Total surface of boards is %s" % total_surface)
 
-        WIDTH, HEIGHT = (2800 + 500)*scale, (2070 + 500)*scale
-        print("Screen has size %d %d" % (WIDTH, HEIGHT))
+        WIDTH, HEIGHT = ceil((2800)*scale), ceil((2070)*scale)
 
         turtle = t.Turtle()
         turtle.hideturtle()
         turtle.speed(0)
         turtle.penup()
 
-        turtle_screen = t.Screen()
-        turtle_screen.setup(WIDTH, HEIGHT)
-        turtle_screen.setworldcoordinates(0, WIDTH, HEIGHT, 0)
+        turtle_screen = turtle.getscreen()
+        turtle_screen.setup(width = WIDTH + 50, height = HEIGHT + 50, startx = None, starty = None)
+        turtle_screen.setworldcoordinates(llx = 0, lly = HEIGHT + 10, urx = WIDTH + 10, ury = 0)
         
         color_list = [
             '#c77373',
@@ -84,14 +83,27 @@ def main():
 	        '#926a6a'
         ]
 
+        # draw board
+        turtle.penup()
+        turtle.setpos(0, 0)
+        turtle.color('black', '#dbb4a0')
+        turtle.pendown()
+        turtle.begin_fill()
+        edges = [ WIDTH, HEIGHT, WIDTH, HEIGHT]
+        for edge in edges:
+            turtle.forward(edge)
+            turtle.left(90)
+
+        turtle.end_fill()
+
         idx = 1;
         for line in file.readlines():
             line_split = line.split()
             if len(line_split) == 5:
                 [w, h, x, y, r] = map(int, line_split)
                 b = Board(idx, w, h, x, y, r)
-                color_idx = random.randint(0, len(color_list)-1)
-                b.draw(turtle, color_list[color_idx])
+                color = random.choice(color_list)
+                b.draw(turtle, color)
                 turtle_screen.update()
                 idx = idx + 1
 

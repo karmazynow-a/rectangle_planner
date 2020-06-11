@@ -16,6 +16,11 @@ public:
     bool exists() const {return m_e;}
     bool rotated() const {return m_r;}
 
+    static int maxWidth;
+    static int maxHeight;
+
+    inline bool checkBorders() const { return (m_x < maxWidth) && (m_y < maxHeight); }
+
     friend std::ostream & operator<< (std::ostream& os, const BoardLocation & b);
 
 private:

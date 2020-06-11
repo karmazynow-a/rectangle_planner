@@ -5,7 +5,6 @@
 
 int ObjectivePenalty::outsidePenalty(const Board & board, const BoardLocation & boardLocation){
     if (!boardLocation.exists()){
-        //std::cout << "BYE" << std::endl;
         return 0;
     }
 
@@ -19,12 +18,12 @@ int ObjectivePenalty::outsidePenalty(const Board & board, const BoardLocation & 
         ? boardLocation.getY() + board.getWidth()
         : boardLocation.getY() + board.getHeight();
 
-    if ( dimX > Board::maxWidth){
-        sum += board.getHeight() * std::fabs(dimX - Board::maxWidth);
+    if ( dimX > BoardLocation::maxWidth){
+        sum += board.getHeight() * std::fabs(dimX - BoardLocation::maxWidth);
     }
 
-    if ( dimY > Board::maxHeight){
-        sum += board.getWidth() * std::fabs(dimY - Board::maxHeight);
+    if ( dimY > BoardLocation::maxHeight){
+        sum += board.getWidth() * std::fabs(dimY - BoardLocation::maxHeight);
     }
 
     return sum;
@@ -32,6 +31,9 @@ int ObjectivePenalty::outsidePenalty(const Board & board, const BoardLocation & 
 
 float ObjectivePenalty::intersectionPenalty(const int & boardIndex, 
     const std::vector<BoardLocation> & boardLocationList ){
+    if (!boardLocationList.at(boardIndex).exists()){
+        return 0;
+    }
 
     float sum = 0;
     for (int i = boardIndex + 1; i < BoardList::size(); ++i){
@@ -40,17 +42,6 @@ float ObjectivePenalty::intersectionPenalty(const int & boardIndex,
     }
 
     return sum;
-}
-
-std::vector<BoardLocation> ObjectivePenalty::createBoardLocationList(const GABin2DecGenome & g){
-    std::vector<BoardLocation> boardLocationList = std::vector<BoardLocation>();
-
-    for (int i = 0; i < BoardList::size(); ++i){
-        boardLocationList.push_back( BoardLocation(g.phenotype(i*4), g.phenotype(i*4 + 1), 
-                    g.phenotype(i*4 + 2), g.phenotype(i*4 + 3)) );
-    }
-
-    return boardLocationList;
 }
 
 float ObjectivePenalty::calculateIntersection (const Board & b1, const BoardLocation & b1Loc, 
@@ -149,14 +140,14 @@ float ObjectivePenalty::checkCorner2( const std::pair<int, int> & l1, const std:
 float ObjectivePenalty::checkVerticalSide( const std::pair<int, int> & l1, const std::pair<int, int> & r1,
     const std::pair<int, int> & l2, const std::pair<int, int> & r2, const int & height){
 
-    if ( l1.second > l2.second && r1.second < r2.second){
+    if ( l1.second >= l2.second && r1.second <= r2.second){
         // right
-        if (l1.first < r2.first && r1.first > r2.first){
+        if (l1.first <= r2.first && r1.first >= r2.first){
             return height * std::fabs(l1.first - r2.first);
         }
 
         // left
-        if (l1.first < l2.first && r1.first > l2.first){
+        if (l1.first >= l2.first && r1.first >= l2.first){
             return height * std::fabs(l2.first - r1.first);
         }
     }
@@ -167,14 +158,14 @@ float ObjectivePenalty::checkVerticalSide( const std::pair<int, int> & l1, const
 float ObjectivePenalty::checkHorizontalSide( const std::pair<int, int> & l1, const std::pair<int, int> & r1,
     const std::pair<int, int> & l2, const std::pair<int, int> & r2, const int & width){
 
-    if ( l1.first > l2.first && r1.first < r2.first){
+    if ( l1.first >= l2.first && r1.first <= r2.first){
         // bottom
-        if (l1.second < r2.second && r1.second > r2.second){
+        if (l1.second <= r2.second && r1.second >= r2.second){
             return width * std::fabs(l1.second - r2.second);
         }
 
         // top
-        if (l1.second < l2.second && r1.second > l2.second){
+        if (l1.second <= l2.second && r1.second >= l2.second){
             return width * std::fabs(l2.second - r1.second);
         }
     }
