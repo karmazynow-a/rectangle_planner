@@ -1,5 +1,7 @@
+#include <iostream>
 
 #include "utility.h"
+#include "Objective.h"
 
 
 GABin2DecPhenotype initPhenotype(const int N, const int W, const int H){
@@ -20,7 +22,7 @@ void saveResults(GABin2DecGenome & g){
     std::fstream f ("output.txt", std::ios_base::out);
 
     // TODO jeszcze znalezione pole
-    f << objective(g) << std::endl;
+    f << Objective::objective(g) << std::endl;
 
     for (int i = 0; i < BoardList::size(); ++i ){
         BoardLocation boardLocation (g.phenotype(i*4), g.phenotype(i*4 + 1), 
@@ -32,30 +34,6 @@ void saveResults(GABin2DecGenome & g){
     }
 
     f.close();
-}
-
-float objective(GAGenome & g){
-    auto &genome = (GABin2DecGenome &) g;
-
-    ObjectiveHelper o = ObjectiveHelper();
-
-    std::vector<BoardLocation> boardLocationList = o.createBoardLocationList(genome);
-
-    double sum = 0;
-    
-    for (int i = 0; i < BoardList::size(); ++i){
-        sum += BoardList::get(i).getArea();
-
-        // check if they are outside board
-        sum -= o.outsidePenalty(BoardList::get(i), boardLocationList.at(i));
-
-        // check intersection
-        sum -= o.intersectionPenalty(i, boardLocationList);
-    }
-
-    float s = sum/100000.0; 
-
-    return s;
 }
 
 int mutator(GAGenome & g, float pm){

@@ -13,6 +13,7 @@ SET( APP_HEADERS
     ${CMAKE_SOURCE_DIR}/Board.h
     ${CMAKE_SOURCE_DIR}/BoardList.h
     ${CMAKE_SOURCE_DIR}/BoardLocation.h
+    ${CMAKE_SOURCE_DIR}/Objective.h
     ${CMAKE_SOURCE_DIR}/ObjectiveHelper.h
     ${CMAKE_SOURCE_DIR}/utility.h )
 
@@ -20,6 +21,7 @@ SET( APP_SOURCES
     ${CMAKE_SOURCE_DIR}/main.cpp 
     ${CMAKE_SOURCE_DIR}/BoardList.cpp
     ${CMAKE_SOURCE_DIR}/BoardLocation.cpp
+    ${CMAKE_SOURCE_DIR}/Objective.cpp
     ${CMAKE_SOURCE_DIR}/ObjectiveHelper.cpp
     ${CMAKE_SOURCE_DIR}/utility.cpp )
 

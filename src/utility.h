@@ -10,8 +10,6 @@
 #include "ObjectiveHelper.h"
 
 
-float objective(GAGenome &);
-
 void saveResults(GABin2DecGenome &);
 
 GABin2DecPhenotype initPhenotype(const int N, const int W, const int H);

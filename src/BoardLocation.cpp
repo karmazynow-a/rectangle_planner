@@ -2,7 +2,7 @@
 #include "BoardLocation.h"
 
 std::ostream & operator<< (std::ostream& os, const BoardLocation & b){
-    if (b.exists()){
+    if (!b.exists()){
         os << -1 << " " 
             << -1 << " "
             << b.getR();

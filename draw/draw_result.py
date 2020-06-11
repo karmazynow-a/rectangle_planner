@@ -34,7 +34,7 @@ class Board:
         self.rotated = rotated
 
     def draw(self, turtle, color):
-        if self.x == -1 or self.y == -1:
+        if self.x < 0 or self.y < 0:
             print("Board %d will not be cut" % self.idx)
             return
 
@@ -50,7 +50,7 @@ class Board:
             if self.rotated \
             else [self.width, self.height, self.width, self.height]
 
-        print("Position (%d, %d) width %d height %d" % (self.x, self.y, edges[0], edges[1]))
+        print("Position (%d, %d) width %d height %d" % (self.x/scale, self.y/scale, edges[0]/scale, edges[1]/scale))
 
         for edge in edges:
             turtle.forward(edge)
@@ -64,7 +64,7 @@ def main():
         total_surface = file.readline()
         print("Total surface of boards is %s" % total_surface)
 
-        WIDTH, HEIGHT = 2800*scale, 2070*scale
+        WIDTH, HEIGHT = (2800 + 500)*scale, (2070 + 500)*scale
         print("Screen has size %d %d" % (WIDTH, HEIGHT))
 
         turtle = t.Turtle()
@@ -73,8 +73,8 @@ def main():
         turtle.penup()
 
         turtle_screen = t.Screen()
-        turtle_screen.setup(WIDTH + 50, HEIGHT + 50)
-        turtle_screen.setworldcoordinates(0, WIDTH + 50, HEIGHT + 50, 0)
+        turtle_screen.setup(WIDTH, HEIGHT)
+        turtle_screen.setworldcoordinates(0, WIDTH, HEIGHT, 0)
         
         color_list = [
             '#c77373',

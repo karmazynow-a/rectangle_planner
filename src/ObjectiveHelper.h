@@ -21,6 +21,9 @@ private:
     float calculateIntersection (const Board &, const BoardLocation &, const Board &,
         const BoardLocation &);
 
+    float checkCrossing( const std::pair<int, int> & l1, const std::pair<int, int> & r1,
+        const std::pair<int, int> & l2, const std::pair<int, int> & r2);
+
     float checkCorner1( const std::pair<int, int> & l1, const std::pair<int, int> & r1,
         const std::pair<int, int> & l2, const std::pair<int, int> & r2);
 
