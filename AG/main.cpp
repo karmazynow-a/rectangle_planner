@@ -23,19 +23,19 @@ int main () {
 	BoardLocation::maxWidth = 2800;
 	BoardLocation::maxHeight = 2070;
 
-	int testSize = 30;
+	int testSize = 50;
 	int popsize  = 1000;
-	int ngen     = 800;
+	int ngen     = 600;
 
 	// tresholds for thightening objective criteria
-	int tr1 = round(ngen*0.4);
-	int tr2 = round(ngen*0.6);
-	int tr3 = round(ngen*0.8);
+	int tr1 = round(ngen*0.3);
+	int tr2 = round(ngen*0.5);
+	int tr3 = round(ngen*0.7);
 
-	float pcross = 0.5, pmut = 0.5;
+	float pcross = 0.3, pmut = 0.05;
 	AGtools::setObjectiveParams(10, 10, true);
 
-	BoardList::readData("../data/test_input1.dat");
+	BoardList::readData("../data/example_input.dat");
 
 	float bestObjective = 0;
 
@@ -55,7 +55,7 @@ int main () {
 		ga.pCrossover(pcross);
 
 		ga.scaling(GASigmaTruncationScaling());
-		ga.selector(GARankSelector());
+		ga.selector(GATournamentSelector());
 
 		ga.elitist(gaTrue);
 		ga.maximize();
@@ -89,7 +89,7 @@ int main () {
 		}
 
 		genome = ga.statistics().bestIndividual();
-		std::cout << "Found new area: " << AGtools::objective(genome) << std::endl;
+		std::cout/* << "Found new area: "*/ << AGtools::objective(genome)/(pow(10, 6)) << std::endl;
 
 		if (AGtools::objective(genome) > bestObjective ){
 			bestObjective = AGtools::objective(genome);
@@ -101,7 +101,7 @@ int main () {
 
 	auto end = std::chrono::steady_clock::now();
     std::chrono::duration<double> elapsed_seconds = end-start;
-    std::cout << "Algorithm took: " << elapsed_seconds.count() << "s\n";
+    std::cout << "Execution took: " << elapsed_seconds.count() << "s\n";
 
 	return 0;
 }

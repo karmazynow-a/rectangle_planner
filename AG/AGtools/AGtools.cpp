@@ -1,3 +1,4 @@
+#include <algorithm>
 
 #include "AGtools.h"
 #include "../Board/BoardList.h"

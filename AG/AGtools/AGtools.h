@@ -30,4 +30,5 @@ public:
      * Save results (objective, boards and its locations) to file
      ******************************************************************************/
     static void saveResults(GA1DArrayAlleleGenome<int> &);
+    
 };
