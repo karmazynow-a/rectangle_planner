@@ -7,19 +7,20 @@ float Objective::oPenaltyFactor = 0;
 bool Objective::shouldPunish = true;
 
 
-std::vector<BoardLocation> Objective::createBoardLocationList(const GABin2DecGenome & g){
+std::vector<BoardLocation> Objective::createBoardLocationList(const GA1DArrayAlleleGenome<int> & g){
     std::vector<BoardLocation> boardLocationList = std::vector<BoardLocation>();
 
-    for (int i = 0; i < g.nPhenotypes(); i+=4){
-        boardLocationList.push_back( BoardLocation(g.phenotype(i), g.phenotype(i + 1), 
-                    g.phenotype(i + 2), g.phenotype(i + 3)) );
+    for (int i = 0; i < g.length(); i+=4){
+        boardLocationList.push_back( BoardLocation(g.gene(i), g.gene(i + 1), 
+                    g.gene(i + 2), g.gene(i + 3)) );
     }
 
     return boardLocationList;
 }
 
 float Objective::objective(GAGenome & g){
-    auto &genome = (GABin2DecGenome &) g;
+    
+    auto &genome = (GA1DArrayAlleleGenome<int> &) g;
 
     ObjectivePenalty o = ObjectivePenalty();
 
@@ -28,9 +29,7 @@ float Objective::objective(GAGenome & g){
     float sum = 0;
     
     for (int i = 0; i < BoardList::size(); ++i){
-        if (!boardLocationList.at(i).checkBorders()){
-            return 0;
-        }
+
         if (!boardLocationList.at(i).exists()){
             continue;
         }
@@ -51,7 +50,5 @@ float Objective::objective(GAGenome & g){
             sum -= penalty;
         }
     }
-
-    //std::cout << "OBJ " << sum << std::endl;
     return sum;
 }

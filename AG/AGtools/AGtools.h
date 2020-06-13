@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ga/ga.h>
+#include <ga/GARealGenome.h>
 
 #include "Objective.h"
 
@@ -9,11 +10,24 @@
  ******************************************************************************/
 class AGtools {
 public:
+    /*******************************************************************************
+     * Calculate objective of algorithm - sum of all areas minus penalties
+     ******************************************************************************/
     static float objective(GAGenome& g) {return Objective::objective(g);}
+
+    /*******************************************************************************
+     * Set parameters for objective function, factor for intersection, being outside
+     * penalties and if algorithm should punish or not
+     ******************************************************************************/
     static void setObjectiveParams(const float&, const float&, const bool& );
 
-    static int mutator(GAGenome& , float ); ///< Mutation operator
+    /*******************************************************************************
+     * Create phenotype - prepare the genes
+     ******************************************************************************/
+    static GAAlleleSetArray<int> initPhenotype(const int&, const int&, const int&);
 
-    static GABin2DecPhenotype initPhenotype(const int&, const int&, const int&); ///< Create phenotype
-    static void init(GAGenome& );           ///< Fill initial population
+    /*******************************************************************************
+     * Save results (objective, boards and its locations) to file
+     ******************************************************************************/
+    static void saveResults(GA1DArrayAlleleGenome<int> &);
 };

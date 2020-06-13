@@ -1,95 +1,107 @@
+/** 
+*   Genetic algorithm that finds best location of small boards
+*		in restricted area
+*   @author Aleksandra Poreba 
+*/
+
 #include <cstdlib>
 #include <iostream>
-#include <iomanip>
+#include <cmath>
+#include <chrono>
 #include <ga/ga.h>
+#include <ga/GA1DArrayGenome.h>
 
 #include "AGtools/AGtools.h"
-#include "utility.h"
 #include "Board/BoardList.h"
 #include "Board/BoardLocation.h"
+
+#include "AGtools/ObjectivePenalty.h"
+
+#define VERBOSE 0
 
 int main () {
 	BoardLocation::maxWidth = 2800;
 	BoardLocation::maxHeight = 2070;
 
+	int testSize = 30;
 	int popsize  = 1000;
-	int ngen     = 500;
-	int punishGen = 400;
-	float pcross = 0.3, pmut = 0.5;
+	int ngen     = 800;
+
+	// tresholds for thightening objective criteria
+	int tr1 = round(ngen*0.4);
+	int tr2 = round(ngen*0.6);
+	int tr3 = round(ngen*0.8);
+
+	float pcross = 0.5, pmut = 0.5;
 	AGtools::setObjectiveParams(10, 10, true);
 
-	BoardList::readData("../data/example_input.dat");
-	GABin2DecPhenotype map = AGtools::initPhenotype(BoardList::size(), BoardLocation::maxWidth, BoardLocation::maxHeight);
+	BoardList::readData("../data/test_input1.dat");
 
-	GABin2DecGenome genome(map, AGtools::objective);
+	float bestObjective = 0;
 
-	genome.initializer(AGtools::init);
-    genome.crossover(GABin2DecGenome::TwoPointCrossover);
-    genome.mutator(AGtools::mutator);
+	auto start = std::chrono::steady_clock::now();
 
-	GASimpleGA ga(genome);
-	ga.populationSize(popsize);
-	ga.nGenerations(ngen);
-	ga.pMutation(pmut);
-	ga.pCrossover(pcross);
+	for (int i = 0; i < testSize; ++i){
+		GAAlleleSetArray<int> alleles = AGtools::initPhenotype(BoardList::size(), BoardLocation::maxWidth, BoardLocation::maxHeight);
 
-	ga.scaling(GASigmaTruncationScaling());
-	ga.selector(GARouletteWheelSelector());
-	//ga.selector(GARankSelector());
-	ga.elitist(gaTrue);
-	ga.maximize();
+		GA1DArrayAlleleGenome<int> genome(alleles, AGtools::objective);
 
-	// zapis statystyk
-	ga.scoreFilename("zbieznosc.dat"); // plik z statystykami
-	ga.scoreFrequency(10); // zapis statystyk
-	ga.flushFrequency(50); // zapis do pliku
-	ga.selectScores(
-				GAStatistics::Mean | 
-                GAStatistics::Maximum | 
-                GAStatistics::Minimum |
-                GAStatistics::Deviation |
-                GAStatistics::Diversity);
-	
-	// ewolucja
-	//ga.evolve((unsigned)time(0));
-	ga.initialize((unsigned)time(0));
-	genome = ga.statistics().bestIndividual();
-	for (int i =0; i < genome.nPhenotypes(); ++i) {
-		std::cout << genome.phenotype(i) << " ";
-	}
-	std::cout << std::endl;
+		genome.crossover(GA1DArrayGenome<int>::TwoPointCrossover);
 
-	while ( !ga.done() ) {
-		ga.step();
-		//std::cout << "BEST" << std::endl;
-		std::cout << ga.generation() << "\t conv=" << ga.convergence();
+		GASimpleGA ga(genome);
+		ga.populationSize(popsize);
+		ga.nGenerations(ngen);
+		ga.pMutation(pmut);
+		ga.pCrossover(pcross);
+
+		ga.scaling(GASigmaTruncationScaling());
+		ga.selector(GARankSelector());
+
+		ga.elitist(gaTrue);
+		ga.maximize();
+		
+		// evolution
+		ga.initialize((unsigned)time(0));
+
+		while ( !ga.done() ) {
+			ga.step();
+
+			if (VERBOSE) {
+				std::cout << ga.generation() << "\t conv=" << ga.convergence();
+				genome = ga.statistics().bestIndividual();
+				std::cout << "\t x=" << genome.gene(0) << 
+					"\t Fbest=" << AGtools::objective(genome) << std::endl;
+			}
+			
+			if (ga.generation() == tr3){
+				VERBOSE && std::cout << "Treshold 3" << std::endl;
+				ga.elitist(gaFalse);
+				AGtools::setObjectiveParams(1, 1, false);
+			} else if (ga.generation() == tr3 + 1){
+				ga.elitist(gaTrue);
+			} else if (ga.generation() == tr1) {
+				VERBOSE && std::cout << "Treshold 1" << std::endl;
+				AGtools::setObjectiveParams(100, 100, true);
+			} else if (ga.generation() == tr2) {
+				VERBOSE && std::cout << "Treshold 2" << std::endl;
+				AGtools::setObjectiveParams(1000, 1000, true);
+			}
+		}
+
 		genome = ga.statistics().bestIndividual();
-		std::cout << "\t x=" << genome.phenotype(0) << 
-			"\t Fbest=" << AGtools::objective(genome) << std::endl;
-/*
-		std::cout << "POP" << std::endl;
-		GAPopulation p = ga.population();
-		for (int i = 0; i< ga.populationSize(); ++i){
-			std::cout << std::setw(10) << std::fixed << AGtools::objective(p.individual(i)) << std::endl;
-		}
-*/		
-		if (ga.generation() == punishGen){
-			ga.elitist(gaFalse);
-			AGtools::setObjectiveParams(1, 1, false);
-		} else if (ga.generation() == punishGen + 1){
-			ga.elitist(gaTrue);
-		} else if (ga.generation() == 50) {
-			AGtools::setObjectiveParams(100, 100, true);
-		} else if (ga.generation() == 100) {
-			AGtools::setObjectiveParams(1000, 1000, true);
+		std::cout << "Found new area: " << AGtools::objective(genome) << std::endl;
+
+		if (AGtools::objective(genome) > bestObjective ){
+			bestObjective = AGtools::objective(genome);
+
+			// FIXME saving to file after execution causes segfaults
+			AGtools::saveResults(genome);
 		}
 	}
 
-	genome = ga.statistics().bestIndividual();
-	for (int i =0; i < genome.nPhenotypes(); ++i) {
-		std::cout << genome.phenotype(i) << " ";
-	}
-	saveResults(genome);
+	auto end = std::chrono::steady_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::cout << "Algorithm took: " << elapsed_seconds.count() << "s\n";
 
 	return 0;
 }

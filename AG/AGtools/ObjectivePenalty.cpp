@@ -1,14 +1,15 @@
 
 #include <cmath>
+#include <cassert>  
 
 #include "ObjectivePenalty.h"
 
-int ObjectivePenalty::outsidePenalty(const Board & board, const BoardLocation & boardLocation){
+float ObjectivePenalty::outsidePenalty(const Board & board, const BoardLocation & boardLocation){
     if (!boardLocation.exists()){
         return 0;
     }
 
-    int sum = 0;
+    float sum = 0;
 
     int dimX = boardLocation.rotated()
         ? boardLocation.getX() + board.getHeight()
@@ -18,19 +19,28 @@ int ObjectivePenalty::outsidePenalty(const Board & board, const BoardLocation & 
         ? boardLocation.getY() + board.getWidth()
         : boardLocation.getY() + board.getHeight();
 
+    int width = boardLocation.rotated()
+        ? board.getHeight()
+        : board.getWidth();
+    
+    int height = boardLocation.rotated()
+        ? board.getWidth()
+        : board.getHeight();
+
     if ( dimX > BoardLocation::maxWidth){
-        sum += board.getHeight() * std::fabs(dimX - BoardLocation::maxWidth);
+        sum += height * std::fabs(dimX - BoardLocation::maxWidth);
     }
 
     if ( dimY > BoardLocation::maxHeight){
-        sum += board.getWidth() * std::fabs(dimY - BoardLocation::maxHeight);
+        sum += width * std::fabs(dimY - BoardLocation::maxHeight);
     }
 
-    return sum;
+    return sum*sum;
 }
 
 float ObjectivePenalty::intersectionPenalty(const int & boardIndex, 
     const std::vector<BoardLocation> & boardLocationList ){
+
     if (!boardLocationList.at(boardIndex).exists()){
         return 0;
     }
@@ -41,7 +51,7 @@ float ObjectivePenalty::intersectionPenalty(const int & boardIndex,
             BoardList::get(i), boardLocationList.at(i) );
     }
 
-    return sum;
+    return sum*sum;
 }
 
 float ObjectivePenalty::calculateIntersection (const Board & b1, const BoardLocation & b1Loc, 
@@ -79,22 +89,19 @@ float ObjectivePenalty::calculateIntersection (const Board & b1, const BoardLoca
         return b2.getArea();
     }
 
-    // b1 b2 crossing
     float sum = 0;
 
     sum += checkCrossing(l1, r1, l2, r2);
     sum += checkCrossing(l2, r2, l1, r1);
 
     if (sum > 0) return sum;
-
-    sum += checkHorizontalSide(l1, r1, l2, r2, b1.getWidth());
-    sum += checkHorizontalSide(l2, r2, l1, r1, b2.getWidth());
-    sum += checkVerticalSide(l1, r1, l2, r2, b1.getHeight());
-    sum += checkVerticalSide(l2, r2, l1, r1, b2.getHeight());
+    sum += checkHorizontalSide(l1, r1, l2, r2);
+    sum += checkHorizontalSide(l2, r2, l1, r1);
+    sum += checkVerticalSide(l1, r1, l2, r2);
+    sum += checkVerticalSide(l2, r2, l1, r1);
 
     if (sum > 0) return sum;
 
-    // rogi
     sum += checkCorner1(l1, r1, l2, r2);
     sum += checkCorner1(l2, r2, l1, r1);
     sum += checkCorner2(l1, r1, l2, r2);
@@ -107,7 +114,7 @@ float ObjectivePenalty::checkCrossing( const std::pair<int, int> & l1, const std
     const std::pair<int, int> & l2, const std::pair<int, int> & r2){
 
     if (l1.first <= l2.first && r1.first >= r2.first
-        && l2.second <= l2.second && r2.second >= r1.second){
+        && l2.second <= l1.second && r2.second >= r1.second){
             return std::fabs(l1.second - r1.second) * std::fabs(l2.first - r2.first);
     }
     return 0;
@@ -137,131 +144,37 @@ float ObjectivePenalty::checkCorner2( const std::pair<int, int> & l1, const std:
     return 0;
 }
 
+// b2 crosses b1's vertical side
 float ObjectivePenalty::checkVerticalSide( const std::pair<int, int> & l1, const std::pair<int, int> & r1,
-    const std::pair<int, int> & l2, const std::pair<int, int> & r2, const int & height){
+    const std::pair<int, int> & l2, const std::pair<int, int> & r2){
 
-    if ( l1.second >= l2.second && r1.second <= r2.second){
-        // right
+    if ( l1.second <= l2.second && r1.second >= r2.second){
+
         if (l1.first <= r2.first && r1.first >= r2.first){
-            return height * std::fabs(l1.first - r2.first);
+            return std::fabs(l2.second - r2.second) * std::fabs(l1.first - r2.first);
         }
 
-        // left
-        if (l1.first >= l2.first && r1.first >= l2.first){
-            return height * std::fabs(l2.first - r1.first);
+        if (l1.first <= l2.first && r1.first >= l2.first){
+            return std::fabs(l2.second - r2.second) * std::fabs(l2.first - r1.first);
         }
     }
 
     return 0;
 }
 
+// b2 crosses b1's horizontal side
 float ObjectivePenalty::checkHorizontalSide( const std::pair<int, int> & l1, const std::pair<int, int> & r1,
-    const std::pair<int, int> & l2, const std::pair<int, int> & r2, const int & width){
+    const std::pair<int, int> & l2, const std::pair<int, int> & r2){
 
-    if ( l1.first >= l2.first && r1.first <= r2.first){
-        // bottom
+    if ( l1.first <= l2.first && r1.first >= r2.first){
         if (l1.second <= r2.second && r1.second >= r2.second){
-            return width * std::fabs(l1.second - r2.second);
+            return std::fabs(l2.first - r2.first) * std::fabs(l1.second - r2.second);
         }
 
-        // top
         if (l1.second <= l2.second && r1.second >= l2.second){
-            return width * std::fabs(l2.second - r1.second);
+            return std::fabs(l2.first - r2.first) * std::fabs(l2.second - r1.second);
         }
     }
 
     return 0;
-}
-
-void ObjectivePenalty::testIntersection () {
-
-    Board b1 = Board(400, 200);
-    Board b2 = Board(50, 100);
-
-    // test outside penalty
-    std::cout << "OUTSIDE" << std::endl;
-    BoardLocation b1Loc = BoardLocation(2750, 10, 0, 1);
-
-    std::cout << "Test " << outsidePenalty(b1, b1Loc) << std::endl; 
-
-    b1Loc = BoardLocation(10, 2000, 0, 1);
-    std::cout << "Test " << outsidePenalty(b1, b1Loc) << std::endl; 
-
-    b1Loc = BoardLocation(10, 2000, 1, 1);
-    std::cout << "Test " << outsidePenalty(b1, b1Loc) << std::endl; 
-
-    b1Loc = BoardLocation(10, 2000, 1, 0);
-    std::cout << "Test " << outsidePenalty(b1, b1Loc) << std::endl; 
-
-    // test intersection
-    std::cout  << std::endl << "INTERSEC" << std::endl;
-
-    b1Loc = BoardLocation(100, 100, 0, 1);
-    BoardLocation b2Loc = BoardLocation(1000, 1000, 0, 1);
-
-    std::cout << "Test " << calculateIntersection(b1, b1Loc, b2, b2Loc) << std::endl; 
-    std::cout << "Test " << calculateIntersection(b2, b2Loc, b1, b1Loc) << std::endl;
-
-    std::cout  << std::endl << "ZAWIERANIE" << std::endl;
-    b2Loc = BoardLocation(110, 110, 0, 1);
-    std::cout << "Test " << calculateIntersection(b1, b1Loc, b2, b2Loc) << std::endl; 
-    std::cout << "Test " << calculateIntersection(b2, b2Loc, b1, b1Loc) << std::endl;
-
-    std::cout  << std::endl << "BOKI" << std::endl;
-    b2Loc = BoardLocation(90, 110, 0, 1); 
-    std::cout << "Test " << calculateIntersection(b1, b1Loc, b2, b2Loc) << std::endl;
-    std::cout << "Test " << calculateIntersection(b2, b2Loc, b1, b1Loc) << std::endl;
-
-    b2Loc = BoardLocation(480, 110, 0, 1); 
-    std::cout << "Test " << calculateIntersection(b1, b1Loc, b2, b2Loc) << std::endl;
-    std::cout << "Test " << calculateIntersection(b2, b2Loc, b1, b1Loc) << std::endl;
-
-    b2Loc = BoardLocation(110, 80, 0, 1); 
-    std::cout << "Test " << calculateIntersection(b1, b1Loc, b2, b2Loc) << std::endl;
-    std::cout << "Test " << calculateIntersection(b2, b2Loc, b1, b1Loc) << std::endl;
-
-    b2Loc = BoardLocation(110, 280, 0, 1); 
-    std::cout << "Test " << calculateIntersection(b1, b1Loc, b2, b2Loc) << std::endl;
-    std::cout << "Test " << calculateIntersection(b2, b2Loc, b1, b1Loc) << std::endl;
-
-    std::cout  << std::endl << "ROGI" << std::endl;
-
-    b2Loc = BoardLocation(90, 90, 0, 1); 
-    std::cout << "Test " << calculateIntersection(b1, b1Loc, b2, b2Loc) << std::endl;
-    std::cout << "Test " << calculateIntersection(b2, b2Loc, b1, b1Loc) << std::endl;
-
-    b2Loc = BoardLocation(480, 280, 0, 1); 
-    std::cout << "Test " << calculateIntersection(b1, b1Loc, b2, b2Loc) << std::endl;
-    std::cout << "Test " << calculateIntersection(b2, b2Loc, b1, b1Loc) << std::endl;
-
-    b2Loc = BoardLocation(490, 90, 0, 1); 
-    std::cout << "Test " << calculateIntersection(b1, b1Loc, b2, b2Loc) << std::endl;
-    std::cout << "Test " << calculateIntersection(b2, b2Loc, b1, b1Loc) << std::endl;
-
-    b2Loc = BoardLocation(90, 280, 0, 1); 
-    std::cout << "Test " << calculateIntersection(b1, b1Loc, b2, b2Loc) << std::endl;
-    std::cout << "Test " << calculateIntersection(b2, b2Loc, b1, b1Loc) << std::endl;
-
-    std::cout  << std::endl << "INNE" << std::endl;
-
-    b2Loc = BoardLocation(100, 100, 0, 1); 
-    std::cout << "Test " << calculateIntersection(b1, b1Loc, b2, b2Loc) << std::endl;
-    std::cout << "Test " << calculateIntersection(b2, b2Loc, b1, b1Loc) << std::endl;
-
-    b2Loc = BoardLocation(100, 100, 0, 1); 
-    b2 = Board(200, 500);
-    std::cout << "Test " << calculateIntersection(b1, b1Loc, b2, b2Loc) << std::endl;
-    std::cout << "Test " << calculateIntersection(b2, b2Loc, b1, b1Loc) << std::endl;
-
-    b2 = Board(123, 678);
-    b2Loc = BoardLocation(2757, 1576, 0, 1); 
-    std::cout << "Test " << outsidePenalty(b2, b2Loc) << std::endl; 
-
-    b1 = Board(1400, 500);
-    b1Loc = BoardLocation(1920, 1238, 1, 1); 
-    b2 = Board(900, 900);
-    b2Loc = BoardLocation(1221, 723, 1, 1); 
-    std::cout << "Test " << calculateIntersection(b1, b1Loc, b2, b2Loc) << std::endl;
-    std::cout << "Test " << calculateIntersection(b2, b2Loc, b1, b1Loc) << std::endl;
-
 }

@@ -16,9 +16,24 @@ public:
      ******************************************************************************/
     static float objective(GAGenome &);
 
-    static std::vector<BoardLocation> createBoardLocationList(const GABin2DecGenome & g);
+    /*******************************************************************************
+     * Create list of board's locations based on genome.
+     ******************************************************************************/
+    static std::vector<BoardLocation> createBoardLocationList(const GA1DArrayAlleleGenome<int> & g);
 
-    static float iPenaltyFactor;                ///< Factor for intersection penalty
-    static float oPenaltyFactor;                ///< Factor for outside the board penalty
-    static bool shouldPunish;                   ///< In case of breaking the rules - should we add penalty or return value of objective as 0
+    /*******************************************************************************
+     * Factor for intersection between two boards penalty.
+     ******************************************************************************/
+    static float iPenaltyFactor;
+
+    /*******************************************************************************
+     * Factor for being outside the board penalty.
+     ******************************************************************************/
+    static float oPenaltyFactor;
+
+    /*******************************************************************************
+     * Flag that infroms whether we should add penalty (punish) for breaking the rules
+     * or return value of objective as 0
+     ******************************************************************************/
+    static bool shouldPunish;
 };
