@@ -1,7 +1,7 @@
 # Rectangle planner
 Genetic algorithm solving the issue of planning location of small rectangles on one big board.
-Small boards should not intersect with each other and be fully insige restricted area.
-Algorithm is looking for solution with maximum area of small boards.
+Small boards should not intersect with each other and be fully inside the restricted area.
+The algorithm is looking for a solution with a maximum area of small boards.
 
 ## Data
 * input - file with dimentions of small boards
@@ -22,14 +22,14 @@ To execute do:
 
     ./AG_proj
 
-Input file `maleplyty.txt` should be in the same directory as executable. As a result file `output.txt` will be produced.
+Input file `maleplyty.txt` should be in the same directory as executable. As a result, the file `output.txt` will be produced.
 
 To draw the boards do:
 
     cd draw
     ./draw_result.py
 
-The turtle screen will show up, and the boards will be drawn. Final drawing will be saved to file `board.eps`. Example drawing is available in documentation.
+The turtle screen will show up, and the boards will be drawn. The final drawing will be saved to file `board.eps`. Example drawing is available in the documentation.
 
 ## Tests
 Test for penalties calculation were prepared. To compile and execute them do:
