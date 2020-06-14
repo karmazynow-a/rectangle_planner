@@ -1,4 +1,4 @@
-SET( APP_NAME AG_proj )
+SET( APP_NAME AG_proj_test )
 
 project(${APP_NAME} CXX C)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
@@ -11,6 +11,7 @@ ENDIF(NOT EXISTS ${GALIB})
 
 SET( BOARD_HEADERS 
     ${CMAKE_SOURCE_DIR}/../AG/Board/Board.h
+    ${CMAKE_SOURCE_DIR}/../AG/Board/BoardList.h
     ${CMAKE_SOURCE_DIR}/../AG/Board/BoardLocation.h )
 
 SET( TOOLS_HEADERS 
@@ -21,6 +22,7 @@ SET( APP_HEADERS
     ${TOOLS_HEADERS} )
 
 SET( BOARD_SOURCES 
+    ${CMAKE_SOURCE_DIR}/../AG/Board/BoardList.cpp
     ${CMAKE_SOURCE_DIR}/../AG/Board/BoardLocation.cpp )
 
 SET( TOOLS_SOURCES 

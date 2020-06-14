@@ -20,28 +20,32 @@
 #define VERBOSE 0
 
 int main () {
+	// parameters of big board - restricted area
 	BoardLocation::maxWidth = 2800;
 	BoardLocation::maxHeight = 2070;
 
-	int testSize = 50;
+	// ga params
 	int popsize  = 1000;
 	int ngen     = 600;
+	float pcross = 0.3, pmut = 0.05;
+	AGtools::setObjectiveParams(10, 10, true);
 
 	// tresholds for thightening objective criteria
 	int tr1 = round(ngen*0.3);
 	int tr2 = round(ngen*0.5);
 	int tr3 = round(ngen*0.7);
 
-	float pcross = 0.3, pmut = 0.05;
-	AGtools::setObjectiveParams(10, 10, true);
-
-	BoardList::readData("../data/example_input.dat");
+	std::cout << "Reading data from input file..." << std::endl<< std::endl;
+	if ( !BoardList::readData("maleplyty.txt") ) {
+		return 0;
+	}
 
 	float bestObjective = 0;
 
+	std::cout << "Start of algorithm execution..." << std::endl<< std::endl;
 	auto start = std::chrono::steady_clock::now();
 
-	for (int i = 0; i < testSize; ++i){
+	while ( std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start).count() < 300){
 		GAAlleleSetArray<int> alleles = AGtools::initPhenotype(BoardList::size(), BoardLocation::maxWidth, BoardLocation::maxHeight);
 
 		GA1DArrayAlleleGenome<int> genome(alleles, AGtools::objective);
@@ -89,7 +93,7 @@ int main () {
 		}
 
 		genome = ga.statistics().bestIndividual();
-		std::cout/* << "Found new area: "*/ << AGtools::objective(genome)/(pow(10, 6)) << std::endl;
+		std::cout << "Found area: " << AGtools::objective(genome) << std::endl;
 
 		if (AGtools::objective(genome) > bestObjective ){
 			bestObjective = AGtools::objective(genome);
@@ -101,6 +105,7 @@ int main () {
 
 	auto end = std::chrono::steady_clock::now();
     std::chrono::duration<double> elapsed_seconds = end-start;
+	std::cout << "End of algorithm." << std::endl;
     std::cout << "Execution took: " << elapsed_seconds.count() << "s\n";
 
 	return 0;

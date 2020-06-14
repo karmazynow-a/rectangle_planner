@@ -1,16 +1,39 @@
 # Rectangle planner
 Genetic algorithm solving the issue of planning location of small rectangles on one big board.
-
-## TODO
-* argument parsing - input, output file, board dimention
-* create class? issue with objective fcv
-* canvas size is too small
+Small boards should not intersect with each other and be fully insige restricted area.
+Algorithm is looking for solution with maximum area of small boards.
 
 ## Data
 * input - file with dimentions of small boards
 * output - surface of small boards, dimensions and their locations
 
+## Compilation and execution
+GALib library is required, available [here](http://lancet.mit.edu/ga/).
+
+    mkdir build
+    cd build
+    cmake ../AG/
+    make
+    ./AG_proj
+
+To draw the boards:
+
+    cd draw
+    ./draw_result.py
+
+The turtle screen will show up, and the boards will be drawn. Final drawing will be saved to file `board.eps`. Example drawing is available in documentation.
+
+## Tests
+Test for penalties calculation were prepared. To execute them do:
+
+    mkdir build_test
+    cd build_test
+    cmake ../test/
+    make
+    ./AG_proj_test
+
+
 ## Technologies
 * C++
-* library GAlib
-* python, turtle for drawings
+* GAlib
+* python + turtle for drawings

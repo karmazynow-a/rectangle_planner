@@ -12,11 +12,9 @@ template <>
 int GAAlleleSet<int>::allele() const {
     int value = 0;
     if (core->type == GAAllele::ENUMERATED){
-        std::cout << "e";
         value = core->a[GARandomInt(0, core->sz - 1)];
     }
     else if (core->type == GAAllele::DISCRETIZED){
-        std::cout<<"d";
         float n = (core->a[1] - core->a[0]) / core->a[2];
         int m = (int)n;
         if (core->lowerb == GAAllele::EXCLUSIVE)
@@ -48,12 +46,10 @@ template <>
 int GAAlleleSet<int>::allele(unsigned int i) const {
     int value = 0;
     if (core->type == GAAllele::ENUMERATED) {
-        std::cout << "ee";
         value = core->a[i % core->sz];
     }
 
     else if (core->type == GAAllele::DISCRETIZED) {
-        std::cout<<"dd";
         float n = (core->a[1] - core->a[0]) / core->a[2];
         unsigned int m = (unsigned int)n;
         if (core->lowerb == GAAllele::EXCLUSIVE)

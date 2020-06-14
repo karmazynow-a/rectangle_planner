@@ -16,7 +16,7 @@ public:
     /*******************************************************************************
      * Read boards' dimentions from file
      ******************************************************************************/
-    static void readData(const std::string & fileName);
+    static bool readData(const std::string & fileName);
 
     /*******************************************************************************
      * Number of boards

@@ -5,13 +5,13 @@
 
 std::vector<Board> BoardList::boardList = std::vector<Board>();
 
-void BoardList::readData (const std::string & fileName){
+bool BoardList::readData (const std::string & fileName){
 
     std::fstream f (fileName, std::ios_base::in);
 
     if ( !f.is_open() ){
-        std::cout << "Nie znaleziono pliku " << fileName << std::endl;
-        return;
+        std::cout << "File " << fileName << " not found!" << std::endl;
+        return false;
     }
 
     int x, y;
@@ -22,4 +22,6 @@ void BoardList::readData (const std::string & fileName){
     }
 
     f.close();
+    std::cout << "Data is ready." << std::endl<< std::endl;
+    return true;
 }
