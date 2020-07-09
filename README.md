@@ -4,14 +4,16 @@ Small boards should not intersect with each other and be fully inside the restri
 The algorithm is looking for a solution with a maximum area of small boards.
 
 ## Project structure
-
-	AG - source directory
-	AG/AGtools - necessary tools for genetic algorithm execution
-	AG/Board - classes related to boards
-	data - example inputs and output
-	draw - drawing script
-	report - short project summary
-	test - unit tests for calculating objective penalties
+```
+.
++-- AG - source directory
+|   +-- AGtools - necessary tools for genetic algorithm execution
+|   +-- Board - classes related to boards
++-- data - example inputs and output
++-- draw - drawing script
++-- report - short project summary
++-- test - unit tests for calculating objective penalties
+```
 
 ## Data
 * input - file with dimentions of small boards
